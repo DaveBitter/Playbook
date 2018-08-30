@@ -14,17 +14,15 @@ class PlayBook {
    * Initializes the playBook based on the general behaviour options that are passed
    */
   _initializePlayBook() {
-    this._options.loop
-      ? this._loopScenes()
-      : this._options.async
-        ? this._runScenesAsync()
-        : this._runScenes();
+    this._options.async ? this._runScenesAsync() : this._runScenes();
   }
 
   /**
    * Runs scenes passed in the options in a syncronous manner and
    * resolves it's promise as soon as all scenes are performed
    */
+
+  //  TODO: async?
   _runScenes() {
     return new Promise(resolve => {
       const { scenes } = this._options;
@@ -33,7 +31,7 @@ class PlayBook {
         for (let scene of scenes) {
           await this._runSceneKeyframes(scene);
         }
-        resolve();
+        this._options.async ? this._runScenes() : resolve();
       })();
     });
   }
@@ -43,23 +41,15 @@ class PlayBook {
    * resolves it's promise as soon as all scenes are performed
    */
   _runScenesAsync() {
+    // TODO: remove promise
     return new Promise(resolve => {
       const { scenes } = this._options;
       const scenePromises = scenes.map(scene => this._runSceneKeyframes(scene));
 
-      Promise.all(scenePromises).then(() => resolve());
+      Promise.all(scenePromises).then(
+        () => (this._options.loop ? this._runScenesAsync() : resolve())
+      );
     });
-  }
-
-  /**
-   * Recursive method that runs scenes passed in the options in either a
-   * syncronous or asyncronous manner and the calls itself after all scenes
-   * are playBooked
-   */
-  _loopScenes() {
-    this._options.async
-      ? this._runScenesAsync().then(this._loopScenes.bind(this))
-      : this._runScenes().then(this._loopScenes.bind(this));
   }
 
   /**
