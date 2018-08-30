@@ -7,14 +7,6 @@ class PlayBook {
   constructor(options) {
     this._options = options;
 
-    this._initializePlayBook();
-  }
-
-  /**
-   * Initializes the playBook based on the general behaviour options that are passed
-   */
-  _initializePlayBook() {
-    // this._options.async ? this._runScenesAsync() : this._runScenes();
     this._runScenes();
   }
 
