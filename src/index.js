@@ -19,36 +19,29 @@ class PlayBook {
   }
 
   /**
-   * Runs scenes passed in the options in a syncronous manner and
-   * resolves it's promise as soon as all scenes are performed
+   * Runs scenes passed in the options in a syncronous or asyncronous manner
    */
-
-  //  TODO: async?
   _runScenes() {
     const { scenes } = this._options;
+    const scenePromises = this._options.async
+      ? scenes.map(scene => this._runSceneKeyframes(scene))
+      : null;
 
-    return this._options.async
-      ? new Promise(resolve => {
-          const scenePromises = scenes.map(scene =>
-            this._runSceneKeyframes(scene)
-          );
-
-          Promise.all(scenePromises).then(
-            () => (this._options.loop ? this._runScenes() : resolve())
-          );
+    this._options.async
+      ? Promise.all(scenePromises).then(() => {
+          if (this._options.loop) this._runScenes();
         })
       : (async () => {
           for (let scene of scenes) {
             await this._runSceneKeyframes(scene);
           }
-
           if (this._options.loop) this._runScenes();
         })();
   }
 
   /**
    *
-   * Runs all keyframes of the scene passed in the parameters in a asyncronous manner and
+   * Runs all keyframes of the scene passed in the parameters in a syncronous asyncronous manner and
    * resolves it's promise as soon as all keyframes are performed
    * @param {Object} scene - Scene object with keyframes and general behaviour options
    * @returns {Promise}
