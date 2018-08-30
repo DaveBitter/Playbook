@@ -41,7 +41,7 @@ class PlayBook {
 
   /**
    *
-   * Runs all keyframes of the scene passed in the parameters in a syncronous asyncronous manner and
+   * Runs all keyframes of the scene passed in the parameters in a syncronous or asyncronous manner and
    * resolves it's promise as soon as all keyframes are performed
    * @param {Object} scene - Scene object with keyframes and general behaviour options
    * @returns {Promise}
@@ -58,20 +58,11 @@ class PlayBook {
             resolve())
         : (async () => {
             for (let keyframe of keyframes) {
-              await this._runAnimation(keyframe);
+              await animate(keyframe);
             }
             resolve();
           })();
     });
-  }
-
-  /**
-   * Returns a promise created by Animate.js
-   * @param {Object} keyframe - Keyframe options holding all needed configuration for Animate.js
-   * @returns {Promise} - Animate.js Promise
-   */
-  _runAnimation(keyframe) {
-    return animate(keyframe);
   }
 
   /**
