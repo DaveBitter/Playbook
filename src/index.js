@@ -13,22 +13,19 @@ class PlayBook {
   /**
    * Runs scenes passed in the options in a syncronous or asyncronous manner
    */
-  _runScenes() {
+  async _runScenes() {
     const { scenes } = this._options;
-    const scenePromises = this._options.async
-      ? scenes.map(scene => this._runSceneKeyframes(scene))
-      : null;
 
-    this._options.async
-      ? Promise.all(scenePromises).then(() => {
-          if (this._options.loop) this._runScenes();
-        })
-      : (async () => {
-          for (let scene of scenes) {
-            await this._runSceneKeyframes(scene);
-          }
-          if (this._options.loop) this._runScenes();
-        })();
+    if (this._options.async) {
+      const scenePromises = scenes.map(scene => this._runSceneKeyframes(scene))
+      await Promise.all(scenePromises)
+    } else {
+      for (let scene of scenes) {
+        await this._runSceneKeyframes(scene);
+      }
+    }
+
+    if (this._options.loop) this._runScenes();
   }
 
   /**
@@ -38,23 +35,18 @@ class PlayBook {
    * @param {Object} scene - Scene object with keyframes and general behaviour options
    * @returns {Promise}
    */
-  _runSceneKeyframes(scene) {
-    let { keyframes, options } = scene;
+  async _runSceneKeyframes(scene) {
+    let { keyframes, options = {} } = scene;
 
-    if (options && !options.animationApi)
+    if (options.animationApi) {
+      return new Promise(resolve => options.element.animate(keyframes, options).onfinish = () => resolve());
+    } else {
       keyframes = this._enrichKeyframesWithOptions(keyframes, options);
 
-    return new Promise(resolve => {
-      options && options.animationApi
-        ? (options.element.animate(keyframes, options).onfinish = () =>
-            resolve())
-        : (async () => {
-            for (let keyframe of keyframes) {
-              await animate(keyframe);
-            }
-            resolve();
-          })();
-    });
+      for (let keyframe of keyframes) {
+        await animate(keyframe);
+      }
+    }
   }
 
   /**
