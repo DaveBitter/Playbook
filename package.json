@@ -6,7 +6,7 @@
   "scripts": {
     "start": "webpack-dev-server --mode=development",
     "build:dev": "webpack --mode=development",
-    "build:prod": "webpack --mode=production"
+    "build:prd": "webpack --mode=production"
   },
   "author": "Dave Bitter <dbitter@mirabeau.nl>",
   "devDependencies": {
