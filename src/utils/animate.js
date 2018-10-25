@@ -1,6 +1,11 @@
-const animate = function(options = {}) {
+/**
+ * Animation module by Peeke Kuepers
+ * https://gist.github.com/peeke/67cd617a206b36c0d0dff70681f53d8d
+ */
+
+const animate = function (options = {}) {
   const { from, to, duration, cb, ease } = Object.assign(
-    { from: 0, to: 1, duration: 1000, cb: () => {}, ease: t => t },
+    { from: 0, to: 1, duration: 1000, cb: () => { }, ease: t => t },
     options
   );
   const delta = to - from;
