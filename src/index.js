@@ -1,4 +1,4 @@
-import animate from "./vendor/animate.js";
+import animate from "./utils/animate.js";
 
 class PlayBook {
   /**
